@@ -87,13 +87,20 @@ module Enumerable
             self.to_enum
         end
     end
-    def my_inject
-        if block_given?
-            new_array = []
+    def my_inject(proc=nil)
+        if !proc && block_given?
             acc = self[0]
             i = 0
             for v in self
                 acc = yield acc, v unless i == 0
+                i += 1
+            end
+            acc
+        elsif proc.class == Proc
+            acc = self[0]
+            i = 0
+            for v in self
+                acc = proc.call(acc, v) unless i == 0
                 i += 1
             end
             acc
@@ -110,4 +117,5 @@ end
 numbers = [1, 2, 3, 4, 5]
 hash_numbers = {a: 1, b: 2, c: 3, d: 4, e: 5}
 
+puts numbers.my_inject(Proc.new { |acc, v| acc * v })
 puts multiple_els(numbers)
