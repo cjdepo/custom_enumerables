@@ -75,14 +75,39 @@ module Enumerable
             self.to_enum
         end
     end
+    def my_map
+        if block_given?
+            new_array = []
+            for v in self
+                changed = yield v
+                new_array << changed
+            end
+            new_array
+        else
+            self.to_enum
+        end
+    end
+    def my_inject
+        if block_given?
+            new_array = []
+            acc = self[0]
+            i = 0
+            for v in self
+                acc = yield acc, v unless i == 0
+                i += 1
+            end
+            acc
+        else
+            self.to_enum
+        end
+    end
+end
+
+def multiple_els(array)
+    array.my_inject { |acc, v| acc * v }
 end
 
 numbers = [1, 2, 3, 4, 5]
 hash_numbers = {a: 1, b: 2, c: 3, d: 4, e: 5}
 
-
-puts "my_any"
-puts numbers.count { |n| n == 3 }
-puts numbers.my_count { |n| n == 3 }
-puts numbers.count { |n| n == 6 }
-puts numbers.my_count { |n| n == 6 }
+puts multiple_els(numbers)
